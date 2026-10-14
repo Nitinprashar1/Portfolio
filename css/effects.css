@@ -1,0 +1,211 @@
+/* ==========================================================================
+   Interactive effects layer (reveals, tilt, magnetic buttons, skills marquee)
+   Additive only: colours, fonts, spacing and layout from style.css are kept.
+   Every rule is gated behind a class that js/effects.js adds, so without JS
+   (or with reduced motion) the site looks exactly as it did before.
+   ========================================================================== */
+
+/* ---------- Scroll reveal: hidden until the element enters the viewport ---------- */
+.fx-hide {
+  opacity: 0;
+}
+
+/* ---------- Card tilt + cursor spotlight (mouse devices only) ---------- */
+html.fx-tilt .about-card,
+html.fx-tilt .service-card,
+html.fx-tilt .portfolio-card {
+  position: relative;
+  transform: perspective(900px) rotateX(var(--fx-rx, 0deg)) rotateY(var(--fx-ry, 0deg))
+    translateY(var(--fx-ty, 0px));
+}
+
+/* Same 6px lift your cards already had on hover, now combined with the tilt */
+html.fx-tilt .about-card:hover,
+html.fx-tilt .service-card:hover,
+html.fx-tilt .portfolio-card:hover {
+  --fx-ty: -6px;
+}
+
+html.fx-tilt .about-card::before,
+html.fx-tilt .service-card::before,
+html.fx-tilt .portfolio-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--fx-mx, 50%) var(--fx-my, 50%),
+    rgba(0, 212, 255, 0.13),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+html.fx-tilt .about-card:hover::before,
+html.fx-tilt .service-card:hover::before,
+html.fx-tilt .portfolio-card:hover::before {
+  opacity: 1;
+}
+
+/* ---------- Magnetic buttons: use the independent `translate` property so the
+   existing hover transforms keep working ---------- */
+html.fx-tilt .social-row a {
+  transition: transform var(--transition), background var(--transition),
+    border-color var(--transition), translate 0.25s ease;
+}
+
+html.fx-tilt .footer-social a {
+  transition: translate 0.25s ease;
+}
+
+html.fx-tilt .intro-replay {
+  transition: border-color 0.3s ease, transform 0.3s ease, translate 0.25s ease;
+}
+
+/* ---------- Skills marquee: same pills, now two endless rows ---------- */
+html.fx-marquee .skills-grid {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 0.9rem;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.fx-track {
+  display: flex;
+  width: max-content;
+  padding: 4px 0; /* room for the pill's 3px hover lift */
+  animation: fxMarquee var(--fx-dur, 40s) linear infinite;
+  will-change: transform;
+}
+
+.fx-track.fx-rev {
+  animation-direction: reverse;
+}
+
+.fx-set {
+  display: flex;
+  gap: 0.9rem;
+  padding-right: 0.9rem;
+}
+
+.fx-track .skill-pill {
+  flex: none;
+  white-space: nowrap;
+}
+
+.skills-grid:hover .fx-track,
+.skills-grid:focus-within .fx-track {
+  animation-play-state: paused;
+}
+
+@keyframes fxMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--fx-shift, 0px)));
+  }
+}
+
+/* ==========================================================================
+   Moving neon borders (cyan -> violet -> green, your existing theme colours)
+   A bright comet of colour travels around each card's 1.5px edge.
+   Needs @property (Chrome/Edge, Safari 16.4+, Firefox 128+); older browsers
+   simply show the static glowing edge.
+   ========================================================================== */
+@property --fx-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes fxSpin {
+  to {
+    --fx-angle: 360deg;
+  }
+}
+
+.glass-card {
+  position: relative;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--fx-angle),
+    transparent 0deg,
+    transparent 200deg,
+    rgba(0, 212, 255, 0.95) 250deg,
+    rgba(124, 58, 237, 0.95) 300deg,
+    rgba(16, 185, 129, 0.9) 340deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.6;
+  transition: opacity var(--transition);
+  animation: fxSpin 7s linear infinite;
+}
+
+/* Vary speed and phase so the cards don't all rotate in lockstep */
+.glass-card:nth-child(2n)::after {
+  animation-duration: 9s;
+  animation-delay: -3s;
+}
+
+.glass-card:nth-child(3n)::after {
+  animation-duration: 8s;
+  animation-delay: -5s;
+}
+
+.glass-card:hover::after {
+  opacity: 1;
+}
+
+/* Cards that are scrolled out of view stop animating (set by js/effects.js) */
+.glass-card.fx-offscreen::after {
+  animation-play-state: paused;
+}
+
+/* Hero portrait: the gradient frame now slowly rotates */
+.image-card {
+  background: conic-gradient(
+    from var(--fx-angle),
+    rgba(0, 212, 255, 0.75),
+    rgba(124, 58, 237, 0.75),
+    rgba(16, 185, 129, 0.7),
+    rgba(0, 212, 255, 0.75)
+  );
+  animation: floatCard 4.5s ease-in-out infinite, fxSpin 9s linear infinite;
+}
+
+/* ---------- Reduced motion: nothing here applies ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .fx-hide {
+    opacity: 1;
+  }
+
+  .fx-track {
+    animation: none;
+  }
+
+  .glass-card::after {
+    animation: none;
+  }
+
+  .image-card {
+    animation: none;
+  }
+}

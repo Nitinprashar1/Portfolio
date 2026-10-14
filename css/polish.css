@@ -1,0 +1,365 @@
+/* ==========================================================================
+   Polish layer: richer colour, better readability, clearer UX.
+   Loaded after style.css and effects.css. Delete this one <link> in index.html
+   to go back to the previous look.
+   ========================================================================== */
+
+:root {
+  --muted: #b6c2d6; /* body copy on dark: contrast 6.8 -> 9.6 */
+  --text: #f8fafc;
+  --card: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.18);
+  --violet-soft: #a78bfa; /* readable violet for text and button ends */
+  --primary-soft: #6ee7ff;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Slightly richer ambient colour: cyan top-left, violet bottom-right, a hint of green */
+  background:
+    radial-gradient(circle at top left, rgba(0, 212, 255, 0.22), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.26), transparent 30%),
+    radial-gradient(circle at 85% 12%, rgba(16, 185, 129, 0.08), transparent 24%),
+    var(--bg);
+}
+
+/* ---------- Headings and body copy ---------- */
+.hero h1 {
+  letter-spacing: -0.02em;
+}
+
+.section-heading h2 {
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.section-heading h2,
+.hero h1 {
+  text-wrap: balance;
+}
+
+.hero-copy,
+.section-heading p:last-child,
+.about-card p,
+.service-card p,
+.portfolio-card p,
+.timeline-card p,
+.contact-info p,
+.contact-cta p {
+  text-wrap: pretty;
+}
+
+.hero-copy {
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.section-heading p:last-child {
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.about-card p,
+.service-card p,
+.portfolio-card p,
+.timeline-card p,
+.contact-info p,
+.contact-info li,
+.contact-cta p {
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+.about-card h3,
+.service-card h3,
+.portfolio-card h3,
+.timeline-card h3 {
+  font-size: 1.12rem;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+}
+
+/* Short gradient accent under every section title */
+.section-heading h2::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 0.85rem;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--violet-soft));
+}
+
+/* ---------- Colour ---------- */
+/* Violet end of the gradient was 3.5:1 on the background; now 7:1 */
+.gradient-text {
+  background-image: linear-gradient(135deg, #ffffff 0%, var(--primary-soft) 45%, var(--violet-soft) 100%);
+}
+
+.stat-card strong {
+  font-size: 2rem;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #ffffff, var(--primary-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tag-row span {
+  font-size: 0.82rem;
+  color: #d3dcec;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Buttons: dark label on the old violet end was 3.5:1; lighter end gives 6:1 */
+.btn:not(.btn-outline) {
+  background: linear-gradient(135deg, var(--primary), #8b7cf6);
+}
+
+.btn-outline:hover,
+.btn-outline:focus-visible {
+  border-color: rgba(0, 212, 255, 0.55);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* ---------- Navigation ---------- */
+.site-header {
+  background: rgba(9, 9, 11, 0.72);
+}
+
+.site-nav a {
+  font-weight: 500;
+}
+
+.site-nav a.is-active {
+  color: var(--text);
+}
+
+.site-nav a.is-active::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Focus visibility (keyboard users) ---------- */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Scroll progress bar (created by js/effects.js) ---------- */
+.fx-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 101;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--primary), #8b7cf6, var(--accent));
+  pointer-events: none;
+}
+
+html.intro-active .fx-progress {
+  display: none;
+}
+
+/* ==========================================================================
+   Navbar logo: monogram badge with a travelling neon edge + shimmering name
+   ========================================================================== */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.logo-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(0, 212, 255, 0.8);
+  /* solid dark fill inside, rotating neon gradient on the 2px edge */
+  background:
+    linear-gradient(#0d0d14, #0d0d14) padding-box,
+    conic-gradient(from var(--fx-angle, 0deg), #00d4ff, #7c3aed, #10b981, #00d4ff) border-box;
+  box-shadow: 0 0 18px rgba(0, 212, 255, 0.3);
+  animation: fxSpin 4s linear infinite;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.logo-text {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.logo-text b {
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--primary-soft), var(--violet-soft), var(--primary-soft));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fxShimmer 6s linear infinite;
+}
+
+.logo:hover .logo-mark,
+.logo:focus-visible .logo-mark {
+  transform: rotate(-8deg) scale(1.08);
+  box-shadow: 0 0 26px rgba(0, 212, 255, 0.55);
+}
+
+.logo:hover .logo-text b {
+  animation-duration: 1.6s;
+}
+
+@keyframes fxShimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========================================================================
+   Hero portrait: pulsing halo, orbiting dots, light sweep, mouse parallax
+   ========================================================================== */
+.hero-visual::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(92%, 430px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 212, 255, 0.32),
+    rgba(124, 58, 237, 0.22) 45%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+  animation: fxPulse 5s ease-in-out infinite;
+}
+
+/* A glowing dot rides each ring (the rings already rotate, so the dots orbit) */
+.ring::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 12px 2px currentColor;
+}
+
+.ring-one {
+  color: #00d4ff;
+}
+
+.ring-two {
+  color: #a78bfa;
+}
+
+.ring-three {
+  color: #10b981;
+}
+
+/* Soft diagonal light sweep across the portrait every few seconds */
+.image-card {
+  overflow: hidden;
+}
+
+.image-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.3) 50%, transparent 62%);
+  transform: translateX(-130%);
+  pointer-events: none;
+  animation: fxShine 6.5s ease-in-out infinite;
+}
+
+/* Mouse parallax (set by js/effects.js): portrait leans in, rings drift the other way */
+html.fx-tilt .image-card {
+  translate: calc(var(--px, 0) * 12px) calc(var(--py, 0) * 12px);
+  transition: translate 0.3s ease-out;
+}
+
+html.fx-tilt .ring {
+  translate: calc(var(--px, 0) * -10px) calc(var(--py, 0) * -10px);
+  transition: translate 0.4s ease-out;
+}
+
+@keyframes fxPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    scale: 1;
+  }
+  50% {
+    opacity: 1;
+    scale: 1.12;
+  }
+}
+
+@keyframes fxShine {
+  0%,
+  55% {
+    transform: translateX(-130%);
+  }
+  80%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+/* ---------- Touch devices: bigger tap targets ---------- */
+@media (max-width: 768px) {
+  .site-nav a {
+    padding: 0.4rem 0.15rem;
+    font-size: 0.92rem;
+  }
+
+  .hero-copy {
+    font-size: 1.02rem;
+  }
+}
+
+/* ---------- Reduced motion: also calm the original ambient animations ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body::before,
+  body::after,
+  .ring,
+  .logo-mark,
+  .logo-text b,
+  .hero-visual::before,
+  .image-card::after {
+    animation: none;
+  }
+}

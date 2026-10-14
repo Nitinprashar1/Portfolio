@@ -27,14 +27,83 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/intro.css" />
+    <link rel="stylesheet" href="css/effects.css" />
+    <link rel="stylesheet" href="css/polish.css" />
+    <!-- Decides before first paint whether the zipper intro should show (skipped for reduced motion and #section deep links) -->
+    <script>
+      (function () {
+        var d = document.documentElement;
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var h = window.location.hash;
+        if (!reduce && (!h || h === '#' || h === '#home')) d.classList.add('intro-active');
+        // Fail-safe: never trap a visitor behind the intro if the intro script doesn't load
+        setTimeout(function () {
+          if (!window.__introReady) d.classList.remove('intro-active');
+        }, 5000);
+      })();
+    </script>
+    <noscript><style>.intro, .intro-replay, .neon-trail { display: none !important; }</style></noscript>
   </head>
   <body>
+    <!-- Cinematic zipper intro: drag the puller down to open the portfolio -->
+    <div id="intro" class="intro" role="region" aria-label="Portfolio introduction">
+      <svg class="intro-svg" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="introPanelGrad" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#09090b" />
+            <stop offset="100%" stop-color="#15103a" />
+          </linearGradient>
+        </defs>
+        <g id="intro-side-l">
+          <path id="intro-panel-l" class="intro-panel" d="" />
+          <path id="intro-teeth-back-l" class="intro-teeth-back" d="" />
+          <path id="intro-teeth-front-l" class="intro-teeth-front" d="" />
+        </g>
+        <g id="intro-side-r">
+          <path id="intro-panel-r" class="intro-panel" d="" />
+          <path id="intro-teeth-back-r" class="intro-teeth-back" stroke-dashoffset="5.5" d="" />
+          <path id="intro-teeth-front-r" class="intro-teeth-front" stroke-dashoffset="5.5" d="" />
+        </g>
+      </svg>
+
+      <button type="button" class="intro-skip">Skip intro</button>
+
+      <div id="intro-puller" class="intro-puller">
+        <button
+          type="button"
+          id="intro-pull-btn"
+          class="intro-pull-btn"
+          aria-label="Open the portfolio. Drag down, or press to open."
+        >
+          <span class="zip-slider" aria-hidden="true"></span>
+          <span class="zip-strap" aria-hidden="true"></span>
+          <span class="zip-avatar" aria-hidden="true">
+            <img src="./img/p1.jpeg" alt="" width="80" height="80" decoding="async" />
+          </span>
+        </button>
+        <p class="intro-hint" aria-hidden="true">
+          <span class="hint-title">Pull Down <i class="fa-solid fa-arrow-down"></i></span>
+          <span class="hint-sub">to see my portfolio</span>
+        </p>
+      </div>
+    </div>
+
+    <canvas id="neon-trail" class="neon-trail" aria-hidden="true"></canvas>
+
+    <button type="button" id="intro-replay" class="intro-replay" aria-label="Replay intro animation" hidden>
+      <i class="fa-solid fa-rotate-right" aria-hidden="true"></i><span>Replay intro</span>
+    </button>
+
     <a class="skip-link" href="#main-content">Skip to content</a>
 
     <!-- Sticky header with navigation and primary call-to-action -->
     <header class="site-header">
       <div class="container nav-shell">
-        <a href="#home" class="logo">Nitin Prashar</a>
+        <a href="#home" class="logo" aria-label="Nitin Prashar, back to top">
+          <!-- <span class="logo-mark" aria-hidden="true">N</span> -->
+          <span class="logo-text">Nitin <b>Prashar</b></span>
+        </a>
         <nav class="site-nav" aria-label="Primary navigation">
           <a href="#home">Home</a>
           <a href="#about">About</a>
@@ -488,7 +557,10 @@
     <footer class="site-footer">
       <div class="container footer-shell">
         <div>
-          <a href="#home" class="logo">Nitin Prashar</a>
+          <a href="#home" class="logo" aria-label="Nitin Prashar, back to top">
+            <!-- <span class="logo-mark" aria-hidden="true">N</span> -->
+            <span class="logo-text">Nitin <b>Prashar</b></span>
+          </a>
           <p>
             Building premium digital experiences with strategy, creativity, and
             precision.
@@ -513,8 +585,17 @@
       </div>
       <div class="container footer-bottom">
         <p>© 2026 Nitin Prashar. All rights reserved.</p>
-        <p>Designed & Developed by Nitin Prashar</p>
+        <!-- <p>Designed & Developed by Nitin Prashar</p> -->
       </div>
     </footer>
+    <!-- GSAP from its official CDN, then the intro + cursor trail scripts -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="js/cursor-trail.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/intro.js"></script>
   </body>
 </html>
